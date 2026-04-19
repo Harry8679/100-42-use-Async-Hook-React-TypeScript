@@ -64,6 +64,7 @@ export const useAsync = <T,>(
 
   // Execute immediately if requested
   if (immediate && status === 'idle') {
+    // eslint-disable-next-line react-hooks/refs
     execute();
   }
 
