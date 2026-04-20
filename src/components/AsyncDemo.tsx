@@ -134,7 +134,261 @@ const AsyncDemo = () => {
             </div>
           </div>
 
-          {/* Code Examples - Continue dans le prochain message */}
+          {/* Code Examples */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+              💻 Exemples d'utilisation
+            </h2>
+
+            <div className="space-y-6">
+              {/* Basic Usage */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Utilisation basique :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`import { useAsync } from './hooks';
+
+const fetchData = async () => {
+  const response = await fetch('https://api.example.com/data');
+  return response.json();
+};
+
+const { data, status, error, execute, reset } = useAsync(fetchData);
+
+// status: 'idle' | 'pending' | 'success' | 'error'
+// execute: fonction pour déclencher l'opération
+// reset: fonction pour réinitialiser l'état`}
+                </pre>
+              </div>
+
+              {/* Boolean Helpers */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Helpers booléens :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`const { isIdle, isPending, isSuccess, isError } = useAsync(asyncFn);
+
+return (
+  <div>
+    {isIdle && <p>Prêt à charger</p>}
+    {isPending && <Spinner />}
+    {isSuccess && <SuccessMessage />}
+    {isError && <ErrorMessage />}
+  </div>
+);`}
+                </pre>
+              </div>
+
+              {/* Form Submission */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Soumission de formulaire :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`const submitForm = async (formData: FormData) => {
+  const response = await fetch('/api/submit', {
+    method: 'POST',
+    body: JSON.stringify(formData),
+  });
+  return response.json();
+};
+
+const { execute, isPending, isSuccess } = useAsync(submitForm);
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  await execute(formData);
+};
+
+return (
+  <form onSubmit={handleSubmit}>
+    {/* Form fields */}
+    <button disabled={isPending}>
+      {isPending ? 'Envoi...' : 'Envoyer'}
+    </button>
+    {isSuccess && <p>Formulaire envoyé !</p>}
+  </form>
+);`}
+                </pre>
+              </div>
+
+              {/* File Upload */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Upload de fichier :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`const uploadFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    body: formData,
+  });
+  return response.json();
+};
+
+const { data, execute, isPending } = useAsync(uploadFile);
+
+const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  if (e.target.files?.[0]) {
+    await execute(e.target.files[0]);
+  }
+};
+
+return (
+  <div>
+    <input type="file" onChange={handleUpload} />
+    {isPending && <ProgressBar />}
+    {data && <p>Fichier uploadé: {data.filename}</p>}
+  </div>
+);`}
+                </pre>
+              </div>
+
+              {/* API Call with Parameters */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Appel API avec paramètres :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`const fetchUser = async (userId: number) => {
+  const response = await fetch(\`/api/users/\${userId}\`);
+  return response.json();
+};
+
+const { data, execute, isPending } = useAsync(fetchUser);
+
+const [userId, setUserId] = useState(1);
+
+useEffect(() => {
+  execute(userId);
+}, [userId]); // Re-fetch quand userId change
+
+return (
+  <div>
+    <select onChange={(e) => setUserId(Number(e.target.value))}>
+      <option value="1">User 1</option>
+      <option value="2">User 2</option>
+    </select>
+    {isPending ? <Spinner /> : <UserProfile user={data} />}
+  </div>
+);`}
+                </pre>
+              </div>
+
+              {/* Multi-Step Process */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Processus multi-étapes :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`const [step, setStep] = useState(1);
+const { execute, isPending, isSuccess } = useAsync(processStep);
+
+const handleNext = async () => {
+  const result = await execute(step);
+  if (result) {
+    setStep(step + 1);
+  }
+};
+
+return (
+  <div>
+    <StepIndicator currentStep={step} />
+    <button onClick={handleNext} disabled={isPending}>
+      {isPending ? 'Traitement...' : 'Suivant'}
+    </button>
+  </div>
+);`}
+                </pre>
+              </div>
+
+              {/* Error Recovery */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Récupération d'erreur :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`const { data, error, execute, reset, isError } = useAsync(fetchData);
+
+const handleRetry = () => {
+  reset(); // Réinitialise l'état
+  execute(); // Réessaie l'opération
+};
+
+return (
+  <div>
+    {isError && (
+      <div className="error">
+        <p>Erreur: {error}</p>
+        <button onClick={handleRetry}>Réessayer</button>
+      </div>
+    )}
+  </div>
+);`}
+                </pre>
+              </div>
+
+              {/* Immediate Execution */}
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-white mb-3">Exécution immédiate :</h3>
+                <pre className="p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm">
+{`// Execute automatiquement au montage du composant
+const { data, isPending } = useAsync(fetchData, true);
+
+// Équivalent à :
+const { data, isPending, execute } = useAsync(fetchData);
+useEffect(() => {
+  execute();
+}, []);`}
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          {/* Use Cases */}
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+            <h2 className="text-2xl font-bold mb-6">🎯 Cas d'usage courants</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-bold mb-2 flex items-center gap-2">
+                  <span>📝</span> Formulaires
+                </h3>
+                <ul className="text-white/90 text-sm space-y-1">
+                  <li>• Soumission de formulaire</li>
+                  <li>• Validation asynchrone</li>
+                  <li>• Enregistrement de données</li>
+                  <li>• Création de ressources</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold mb-2 flex items-center gap-2">
+                  <span>📤</span> Uploads
+                </h3>
+                <ul className="text-white/90 text-sm space-y-1">
+                  <li>• Upload de fichiers</li>
+                  <li>• Upload d'images</li>
+                  <li>• Import de données</li>
+                  <li>• Batch processing</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold mb-2 flex items-center gap-2">
+                  <span>🌐</span> API
+                </h3>
+                <ul className="text-white/90 text-sm space-y-1">
+                  <li>• Appels API</li>
+                  <li>• CRUD operations</li>
+                  <li>• Authentification</li>
+                  <li>• Fetch de données</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold mb-2 flex items-center gap-2">
+                  <span>⚙️</span> Traitement
+                </h3>
+                <ul className="text-white/90 text-sm space-y-1">
+                  <li>• Traitement de données</li>
+                  <li>• Processus multi-étapes</li>
+                  <li>• Calculs asynchrones</li>
+                  <li>• Import/Export</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
