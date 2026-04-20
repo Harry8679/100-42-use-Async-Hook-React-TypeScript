@@ -2,11 +2,11 @@ import { useState, useCallback, useRef } from 'react';
 
 type AsyncStatus = 'idle' | 'pending' | 'success' | 'error';
 
-interface UseAsyncReturn<T> {
+interface UseAsyncReturn<T, Args extends unknown[]> {
   data: T | null;
   status: AsyncStatus;
   error: string | null;
-  execute: (...args: unknown[]) => Promise<T | undefined>;
+  execute: (...args: Args) => Promise<T | undefined>;
   reset: () => void;
   isIdle: boolean;
   isPending: boolean;
@@ -14,17 +14,17 @@ interface UseAsyncReturn<T> {
   isError: boolean;
 }
 
-export const useAsync = <T,>(
-  asyncFunction: (...args: unknown[]) => Promise<T>,
+export const useAsync = <T, Args extends unknown[] = []>(
+  asyncFunction: (...args: Args) => Promise<T>,
   immediate = false
-): UseAsyncReturn<T> => {
+): UseAsyncReturn<T, Args> => {
   const [data, setData] = useState<T | null>(null);
   const [status, setStatus] = useState<AsyncStatus>(immediate ? 'pending' : 'idle');
   const [error, setError] = useState<string | null>(null);
   const pendingPromiseRef = useRef<Promise<T> | null>(null);
 
   const execute = useCallback(
-    async (...args: unknown[]): Promise<T | undefined> => {
+    async (...args: Args): Promise<T | undefined> => {
       setStatus('pending');
       setError(null);
 
@@ -64,7 +64,6 @@ export const useAsync = <T,>(
 
   // Execute immediately if requested
   if (immediate && status === 'idle') {
-    // eslint-disable-next-line react-hooks/refs
     execute();
   }
 
