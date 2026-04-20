@@ -1,12 +1,7 @@
-import './App.css'
+import AsyncDemo from './components/AsyncDemo';
 
 function App() {
-
-  return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
+  return <AsyncDemo />;
 }
 
-export default App
+export default App;
