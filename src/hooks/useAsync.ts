@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 type AsyncStatus = 'idle' | 'pending' | 'success' | 'error';
 
@@ -15,8 +15,7 @@ interface UseAsyncReturn<T, Args extends unknown[]> {
 }
 
 export const useAsync = <T, Args extends unknown[] = []>(
-  asyncFunction: (...args: Args) => Promise<T>,
-  immediate = false
+  asyncFunction: (...args: Args) => Promise<T>
 ): UseAsyncReturn<T, Args> => {
   const [data, setData] = useState<T | null>(null);
   const [status, setStatus] = useState<AsyncStatus>('idle');
@@ -60,14 +59,6 @@ export const useAsync = <T, Args extends unknown[] = []>(
     setStatus('idle');
     setError(null);
     pendingPromiseRef.current = null;
-  }, []);
-
-  // Execute immediately if requested (only works for functions with no required args)
-  useEffect(() => {
-    if (immediate) {
-      execute([] as unknown as Args);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
