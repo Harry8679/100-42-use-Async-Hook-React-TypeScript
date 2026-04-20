@@ -12,9 +12,7 @@ const fetchUser = async (userId: number): Promise<User> => {
 
 const ApiCallDemo = () => {
   const [userId, setUserId] = useState(1);
-  const { data, status, error, execute, reset } = useAsync<User>(
-    (userId: number) => fetchUser(userId)
-  );
+  const { data, status, error, execute, reset } = useAsync(fetchUser);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
