@@ -22,9 +22,7 @@ const executeStep = async (step: number): Promise<StepResult> => {
 const MultiStepDemo = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const { data, status, error, execute, reset } = useAsync<StepResult>(
-    (step: number) => executeStep(step)
-  );
+  const { data, status, error, execute, reset } = useAsync(executeStep);
 
   const handleNextStep = async () => {
     const result = await execute(currentStep);
